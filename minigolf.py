@@ -1,3 +1,5 @@
+#!/usr/bin/python3
+
 #Starting skeleton for the golf course
 
 from time import sleep
@@ -16,6 +18,7 @@ import RPi.GPIO as GPIO
 
 #GPIO Pins for the gates
 #fake for now
+print('\nSetting up constants')
 gSpace = 2
 gReality = 3
 gPower = 4
@@ -34,6 +37,7 @@ cMind = (255,255,0)
 cTime = (0,255,0)
 cSoul = (255,180,0)
 
+
 #####Sound Files
 fMusic = './snd/imperial_march.wav'
 fSpace = './snd/blaster-firing.wav'
@@ -45,7 +49,10 @@ fSoul = './snd/blaster-firing.wav'
 fSnap = './snd/R2D2-hey-you.wav'
 fMsg = './snd/swvader01.wav'
 
+print('...Done!')
+
 #setup GPIO
+print('Setting up GPIO')
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
@@ -54,8 +61,11 @@ GPIO.setwarnings(False)
 for g in gList:
 	GPIO.setup(g,GPIO.IN, pull_up_down=GPIO.PUD_DOWN)
 
+print('...Done!')
+
 #setup sound files
-mixer.init(channel = 1) # mono instead of stereo
+print('Initializing Audio')
+mixer.init(channels = 1) # mono instead of stereo
 mixer.music.load(fMusic)
 sndSpace = mixer.Sound(fSpace)
 sndReality = mixer.Sound(fReality)
@@ -65,6 +75,9 @@ sndTime = mixer.Sound(fTime)
 sndSoul = mixer.Sound(fSoul)
 sndSnap = mixer.Sound(fSnap)
 sndMsg = mixer.Sound(fMsg)
+
+print('...Done!')
+
 
 #setup NeoPixels
 #setup ServoThingy?
