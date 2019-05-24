@@ -66,8 +66,11 @@ gloveMin = 5
 gloveMax = 12
 gloveStep = 0.1
 gloveSleep = 0.05	
-	
-	
+gloveTimeout = 10000 #in milliseconds (10 seconds for testing?)
+
+#misc
+tParkerDelay = 5000 #in milliseconds, delay before Peter Parker whines	
+tCycle = 1.0 #sleep cycle time. Might play with this for response times? 	
 #####Even better stuff here
 class Stone:
 	def __init__(self, name, soundfile, pin, rgb, tripped, nPixel, sndObj):
@@ -168,7 +171,10 @@ def gate_passed(channel):
 				pixels[s.nPixel] = (0,0,0)
 			else:
 				pixels[s.nPixel] = s.rgb
-
+		if not mixer.music.get_busy:
+			mixer.music.play()
+			
+			
 				
 def flashStones(rgb):
 	for i in range(flashLoops):
@@ -184,8 +190,34 @@ def bAllGatesPassed():	#Returns True if there aren't any untriggered stones
 			val = False
 	return val
 
-def finalGatePassed(channel): #channel is passed from GPIO, but not used
+def openGlove():
+	print('open Glove')
+	DC = gloveMin
+	glovePWM.start(DC)
+	while DC < gloveMax:
+		glovePWM.ChangeDutyCycle(DC)
+		time.sleep(gloveSleep)
+		DC += gloveStep
 	
+	
+def closeGlove():
+	print('close Glove')
+	DC = gloveMax
+	glovePWM.start(DC)
+	while DC < gloveMin:
+		glovePWM.ChangeDutyCycle(DC)
+		time.sleep(gloveSleep)
+		DC += gloveStep
+		glovePWM.stop()
+	
+def finalGatePassed(channel): #channel is passed from GPIO, but not used
+	mixer.music.stop()
+	sndSnap.play()
+	time.sleep(tParkerDelay)
+	sndMsg.play()
+	for s in Stones:
+		s.triggered = False
+	closeGlove()
 	
 #Setup music and some sound effects, don't start yet
 mixer.init(channel = 1) # mono instead of stereo
@@ -224,9 +256,45 @@ GPIO.setup(gEnd, GPIO.IN, pull_up_down.PUD_UP) #needs same pullup/pulldown value
 #Play bootup sound
 sndReady.play()
 
+#testloop - 1-6 for gates, 'q' to quit. End chute happens a few seconds after all 6 gates passed
+while 1:
+
+	testInput = input()
+	if testInput = '1':
+		gate_passed(gSpace)
+	elif testInput = '2':
+		gate_passed(gReality)
+	elif testInput = '3':
+		gate_passed(gPower)
+	elif testInput = '4':
+		gate_passed(gMind)
+	elif testInput = '5':
+		gate_passed(gTime)
+	elif testInput = '6':
+		gate_passed(gSoul)
+	elif testInput = 'q'):
+		quit()
+		
+	if bAllGatesPassed():
+		openGlove()
+		#play a sound here?
+		GPIO.wait_for_edge(gEnd, GPIO.FALLING, timeout = gloveTimeout)
+		finalGatePassed()
+	
+	time.sleep(1)
+
+		
+		
+		
+
+						
 							
-							
-							
+#Space Stone - Blue
+#Reality Stone - Red
+#Power Stone - Purple
+#Mind Stone - Yellow
+#Time Stone - Green
+#Soul Stone - Orange							
 							
 							
 							
