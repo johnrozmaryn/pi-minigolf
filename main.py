@@ -15,38 +15,38 @@ import neopixel #for neopixels
 
 #Sound Files
 #background music
-fMusic = './snd/imperial_march.wav'
+fMusic = './snd/av_theme.wav'
 #sounds for each gate
-fSpace = './snd/blaster-firing.wav'
-fReality = './snd/blaster-firing.wav'
-fPower = './snd/blaster-firing.wav'
-fMind = './snd/blaster-firing.wav'
-fTime = './snd/blaster-firing.wav'
-fSoul = './snd/blaster-firing.wav'
+fSpace = './snd/space.wav'
+fReality = './snd/reality.wav'
+fPower = './snd/power.wav'
+fMind = './snd/mind.wav'
+fTime = './snd/time.wav'
+fSoul = './snd/soul.wav'
 #end game sounds
-fSnap = './snd/R2D2-hey-you.wav'
-fMsg = './snd/swvader01.wav'
+fSnap = './snd/snap.wav'
+fMsg = './snd/i-dont-feel-so-good-2.wav'
 #boot sound
 fReadySound = './snd/blaster-firing.wav'
 
 #GPIO Pins for the gates and glove
 #fake for now
-gSpace = 2
+gSpace = 9
 gReality = 3
 gPower = 4
 gMind = 5
 gTime = 6
 gSoul = 7
 gEnd = 8 #final gate, not a Stone)
-gGlove = 21
+gGlove = 13
 
 #Colors
 cSpace= (0,0,255)
 cReality = (255,0,0)
-cPower = (255,0,0)
+cPower = (150,0,150)
 cMind = (255,255,0)
 cTime = (0,255,0)
-cSoul = (255,180,0)
+cSoul = (255,80,0)
 
 #Output neoPixel locations on the string, 0 for first
 pSpace = 0
@@ -65,8 +65,21 @@ flashOff = 0.2
 gloveMin = 5
 gloveMax = 12
 gloveStep = 0.1
-gloveSleep = 0.05	
+gloveSleep = 0.1
+gloveTimeout = 5000	
 	
+
+#Setup music and some sound effects, don't start yet
+# mono instead of stereo
+mixer.init(channels = 1)
+mixer.music.load(fMusic)
+sndSnap = mixer.Sound(fSnap)
+sndMsg = mixer.Sound(fMsg)
+sndReady = mixer.Sound(fReadySound)
+
+#misc
+tParkerDelay = 3
+
 	
 #####Even better stuff here
 class Stone:
@@ -160,46 +173,77 @@ def findStoneByChannel(channel):
 
 def gate_passed(channel):
 	gatePassed = findStoneByChannel(channel)
-	if not s.triggered: #this is the first time the gate has been passed
+	if not mixer.music.get_busy():
+	   mixer.music.play()
+	if not gatePassed.tripped: #this is the first time the gate has been passed
+		gatePassed.tripped = True
 		gatePassed.sndObj.play()	#play a sound effect
 		flashStones(gatePassed.rgb) #flash all of the stones the color just passed
-		for s in stones:		#finish with only collected stones turned on 
-			if s.triggered:
+		for s in Stones:		#finish with only collected stones turned on 
+			if not s.tripped:
 				pixels[s.nPixel] = (0,0,0)
 			else:
 				pixels[s.nPixel] = s.rgb
 
-				
 def flashStones(rgb):
 	for i in range(flashLoops):
-	pixels.fill(rgb)
-	sleep(flashOn)
-	pixels.fill((0,0,0))
-	sleep(flashOff)
+	   pixels.fill(rgb)
+	   sleep(flashOn)
+	   pixels.fill((0,0,0))
+	   sleep(flashOff)
 
 def bAllGatesPassed():	#Returns True if there aren't any untriggered stones
 	val = True 
-	for each s in Stones:
-		if not s.trigered:
+	for s in Stones:
+		if not s.tripped:
 			val = False
 	return val
 
-def finalGatePassed(channel): #channel is passed from GPIO, but not used
+def openGlove():
+   print('open Glove')
+   DC = gloveMin
+   glovePWM.start(DC)
+   glovePWM.ChangeDutyCycle(DC)
+   while DC < gloveMax:
+      glovePWM.ChangeDutyCycle(DC)
+      sleep(gloveSleep)
+      DC += gloveStep
+      
+def closeGlove():
+   print('close Glove')
+   DC = gloveMax
+   glovePWM.start(DC)
+   while DC > gloveMin:
+      glovePWM.ChangeDutyCycle(DC)
+      sleep(gloveSleep)
+      DC -= gloveStep
+      
+
+
+def finalGatePassed(): #channel is passed from GPIO, but not used
+	mixer.music.stop()
+	sndSnap.play()
+	pixels.fill((0,0,0))
+	sleep(tParkerDelay)
+	sndMsg.play()
+	for s in Stones:
+	   s.tripped = False
+	closeGlove()
 	
 	
 #Setup music and some sound effects, don't start yet
-mixer.init(channel = 1) # mono instead of stereo
+ # mono instead of stereo
 mixer.music.load(fMusic)
 sndSnap = mixer.Sound(fSnap)
 sndMsg = mixer.Sound(fMsg)
 sndReady = mixer.Sound(fReadySound)
 
 #Setup neoPixels
-pixel_pin = board.D18
+pixel_pin = board.D21
 num_pixels = 6
 ORDER = neopixel.RGB
 BRIGHTNESS = 0.2    #Experiment with this...
-pixels = neopixel.NeoPixel(pixel_pin, num_pixels, brightness = BRIGHTNESS, auto_write = True, pixel_order = ORDER)
+pixels = neopixel.NeoPixel(pixel_pin, num_pixels)
 	
 #GPIO Config 
 GPIO.setmode(GPIO.BCM)
@@ -209,22 +253,46 @@ GPIO.setwarnings(False)
 GPIO.setup(gGlove, GPIO.OUT)
 glovePWM = GPIO.PWM(gGlove, 50)
 glovePWM.start(gloveMin)
-time.sleep(3)
+sleep(3)
 glovePWM.stop()
+
 
 #Setup GPIO for the stones, includting callback events for everything	
 for s in Stones:
-	GPIO.setup(s.pin, GPIO.IN, pull_up_down.PUD_UP) #change PUD_UP to PUD_DOWN if no response?
+	GPIO.setup(s.pin, GPIO.IN, pull_up_down = GPIO.PUD_UP) #change PUD_UP to PUD_DOWN if no response?
 	GPIO.add_event_detect(s.pin, GPIO.FALLING, callback=gate_passed, bouncetime = 200)
 	
 
 #Setup GPIO for exit chute
-GPIO.setup(gEnd, GPIO.IN, pull_up_down.PUD_UP) #needs same pullup/pulldown value as the stone gates
+GPIO.setup(gEnd, GPIO.IN, pull_up_down = GPIO.PUD_UP) #needs same pullup/pulldown value as the stone gates
 
 #Play bootup sound
 sndReady.play()
 
-							
+#testloop
+while 1:
+   testInput = input()
+   if testInput == '1':
+      gate_passed(gSpace)
+   elif testInput == '2':
+      gate_passed(gReality)
+   elif testInput == '3':
+      gate_passed(gPower)
+   elif testInput == '4':
+      gate_passed(gMind)
+   elif testInput == '5':
+      gate_passed(gTime)
+   elif testInput == '6':
+      gate_passed(gSoul)
+   elif testInput == 'q':
+      quit()
+      
+   if bAllGatesPassed():
+      openGlove()
+      GPIO.wait_for_edge(gEnd, GPIO.FALLING, timeout = gloveTimeout)
+      finalGatePassed()
+      
+   sleep(1)							
 							
 							
 							

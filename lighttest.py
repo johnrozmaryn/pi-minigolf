@@ -6,10 +6,10 @@ import neopixel #for neopixels
 
 cSpace= (0,0,255)
 cReality = (255,0,0)
-cPower = (255,0,0)
+cPower = (255,0,255)
 cMind = (255,255,0)
 cTime = (0,255,0)
-cSoul = (255,180,0)
+cSoul = (255,50,0)
 
 pSpace = 0
 pReality = 1
@@ -55,7 +55,7 @@ pixels[pMind] = cMind
 pixels[pTime] = cTime
 pixels[pSoul] = cSoul
 
-time.sleep(2)
+time.sleep(5)
 
 alloff()
 
