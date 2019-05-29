@@ -4,6 +4,9 @@ import RPi.GPIO as GPIO
 import serial #pyserial,for sending commands to the Arduino
 
 
+#look here for possibly better PWM for servo:
+#https://learn.adafruit.com/adafruits-raspberry-pi-lesson-8-using-a-servo-motor/software
+
 ########6 stones##########
 #Space Stone - Blue
 #Reality Stone - Red
@@ -59,8 +62,8 @@ bitSoul = 32
 #Glove Movement
 gloveMin = 5
 gloveMax = 12
-gloveStep = 0.1
-gloveSleep = 0.1
+gloveStep = 0.2
+gloveSleep = 0.05
 gloveTimeout = 5000	
 	
 #setup serial connection to the Arduino
@@ -208,6 +211,7 @@ def closeGlove():
       glovePWM.ChangeDutyCycle(DC)
       sleep(gloveSleep)
       DC -= gloveStep
+   glovePWM.stop()
 
 def finalGatePassed(): #channel is passed from GPIO, but not used
 	mixer.music.stop()
@@ -236,9 +240,9 @@ GPIO.setwarnings(False)
 #Setup GPIO for glove
 GPIO.setup(gGlove, GPIO.OUT)
 glovePWM = GPIO.PWM(gGlove, 50)
-glovePWM.start(gloveMin)
-sleep(3)
-glovePWM.stop()
+#glovePWM.start(gloveMin)
+#sleep(3)
+#glovePWM.stop()
 
 
 #Setup GPIO for the stones, includting callback events for everything	
@@ -254,29 +258,29 @@ GPIO.setup(gEnd, GPIO.IN, pull_up_down = GPIO.PUD_UP) #needs same pullup/pulldow
 sndReady.play()
 
 #testloop
-#while 1:
-#   testInput = input()
-#   if testInput == '1':
-#      gate_passed(gSpace)
-#   elif testInput == '2':
-#      gate_passed(gReality)
-#   elif testInput == '3':
-#      gate_passed(gPower)
-#   elif testInput == '4':
-#      gate_passed(gMind)
-#   elif testInput == '5':
-#      gate_passed(gTime)
-#   elif testInput == '6':
-#      gate_passed(gSoul)
-#   elif testInput == 'q':
-#      quit()
-#      
-#   if bAllGatesPassed():
-#      openGlove()
-#      GPIO.wait_for_edge(gEnd, GPIO.FALLING, timeout = gloveTimeout)
-#      finalGatePassed()
-#      
-#   sleep(1)							
+while 1:
+   testInput = input()
+   if testInput == '1':
+      gate_passed(gSpace)
+   elif testInput == '2':
+      gate_passed(gReality)
+   elif testInput == '3':
+      gate_passed(gPower)
+   elif testInput == '4':
+      gate_passed(gMind)
+   elif testInput == '5':
+      gate_passed(gTime)
+   elif testInput == '6':
+      gate_passed(gSoul)
+   elif testInput == 'q':
+      quit()
+      
+   if bAllGatesPassed():
+      openGlove()
+      GPIO.wait_for_edge(gEnd, GPIO.FALLING, timeout = gloveTimeout)
+      finalGatePassed()
+      
+   sleep(1)							
 							
 							
 							
