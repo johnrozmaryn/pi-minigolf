@@ -9,29 +9,29 @@
 #define LED_COUNT 6
 
 #define pSpace 0
-#define rSpace 0
+#define rSpace 0    
 #define gSpace 0
-#define bSpace 255
+#define bSpace 180 
 
 #define pReality 1
-#define rReality 255
-#define gReality 0
-#define bReality 0
+#define rReality 180    
+#define gReality 0     
+#define bReality 0    
 
 #define pPower 2
-#define rPower 150
+#define rPower 180
 #define gPower 0
-#define bPower 150
+#define bPower 180
 
 #define pMind 3
-#define rMind 255
-#define gMind 255
-#define bMind 0
+#define rMind 255  
+#define gMind 255   
+#define bMind 0    
 
 #define pTime 4
-#define rTime 0
-#define gTime 255
-#define bTime 0
+#define rTime 0    
+#define gTime 255  
+#define bTime 0    
 
 #define pSoul 5
 #define rSoul 255
@@ -39,7 +39,7 @@
 #define bSoul 0
 
 char buf[80];  //serial buffer?
-Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, NEO_RGB); //declaring the NeoPixel object
+Adafruit_NeoPixel pixels(LED_COUNT, LED_PIN, NEO_GRB); //declaring the NeoPixel object
 
 int flashLoops = 3;
 int flashOn = 500;  // in milliseconds
@@ -95,13 +95,6 @@ void doLights(int fromPi)
     flashPixels(rSoul, gSoul, bSoul);
     break;
   case 99: //turn off the pixels
-/*    pixels.setPixelColor(pSpace,0,0,0);
-    pixels.setPixelColor(pReality,0,0,0);
-    pixels.setPixelColor(pPower,0,0,0);
-    pixels.setPixelColor(pMind,0,0,0);
-    pixels.setPixelColor(pTime,0,0,0);
-    pixels.setPixelColor(pSoul,0,0,0);
-*/
     pixels.fill(pixels.Color(0,0,0));
     pixels.show();
     break;

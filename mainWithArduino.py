@@ -179,7 +179,8 @@ def gate_passed(channel):
    if not gatePassed.tripped: #this is the first time the gate has been passed
       gatePassed.tripped = True
       gatePassed.sndObj.play()	#play a sound effect
-      sendArdCommand(gatePassed.flashCmd) #flash all of the stones the color just passed      
+      sendArdCommand(gatePassed.flashCmd) #flash all of the stones the color just passed   
+      sleep(2.1)   
    bitCmd = 0   #finish with only collected stones turned on
    for s in Stones:		 
       if s.tripped:
