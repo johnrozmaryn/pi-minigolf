@@ -2,7 +2,7 @@ from time import sleep
 from pygame import mixer #for sound
 import RPi.GPIO as GPIO
 import serial #pyserial,for sending commands to the Arduino
-
+import wiringpi
 
 #look here for possibly better PWM for servo:
 #https://learn.adafruit.com/adafruits-raspberry-pi-lesson-8-using-a-servo-motor/software
@@ -60,15 +60,15 @@ bitSoul = 32
 
 	
 #Glove Movement
-gloveMin = 5
-gloveMax = 12
-gloveStep = 0.2
-gloveSleep = 0.05
+gloveMin = 100
+gloveMax = 200
+gloveStep = 1
+gloveSleep = 0.01
 gloveTimeout = 5000	
 	
 #setup serial connection to the Arduino
 #ard = serial.Serial('/dev/ttyACM0', 115200)
-ard = serial.Serial('/dev/tty5', 115200)
+ard = serial.Serial('/dev/ttyUSB0', 115200)
 
 #Setup music and some sound effects, don't start yet
 # mono instead of stereo
@@ -195,23 +195,15 @@ def bAllGatesPassed():	#Returns True if there aren't any untriggered stones
 
 def openGlove():
    print('open Glove')
-   DC = gloveMin
-   glovePWM.start(DC)
-   glovePWM.ChangeDutyCycle(DC)
-   while DC < gloveMax:
-      glovePWM.ChangeDutyCycle(DC)
+   for DC in range(gloveMin, gloveMax, gloveStep):
+      wiringpi.pwmWrite(gGlove,DC)
       sleep(gloveSleep)
-      DC += gloveStep
-      
+         
 def closeGlove():
    print('close Glove')
-   DC = gloveMax
-   glovePWM.start(DC)
-   while DC > gloveMin:
-      glovePWM.ChangeDutyCycle(DC)
+   for DC in range(gloveMax, gloveMin, -gloveStep):
+      wiringpi.pwmWrite(gGlove,DC)
       sleep(gloveSleep)
-      DC -= gloveStep
-   glovePWM.stop()
 
 def finalGatePassed(): #channel is passed from GPIO, but not used
 	mixer.music.stop()
@@ -238,8 +230,11 @@ GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
 #Setup GPIO for glove
-GPIO.setup(gGlove, GPIO.OUT)
-glovePWM = GPIO.PWM(gGlove, 50)
+wiringpi.wiringPiSetupGpio()
+wiringpi.pinMode(gGlove, wiringpi.GPIO.PWM_OUTPUT)
+wiringpi.pwmSetMode(wiringpi.GPIO.PWM_MODE_MS)
+wiringpi.pwmSetClock(192)
+wiringpi.pwmSetRange(2000)
 #glovePWM.start(gloveMin)
 #sleep(3)
 #glovePWM.stop()
