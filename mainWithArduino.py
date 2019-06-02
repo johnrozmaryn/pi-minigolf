@@ -60,10 +60,10 @@ bitSoul = 32
 
 	
 #Glove Movement
-gloveMin = 100
-gloveMax = 200
+gloveOpenPos = 100
+gloveClosePos = 200
 gloveStep = 1
-gloveSleep = 0.01
+gloveSleep = 0.03     #This was 0.01 in the video
 gloveTimeout = 5000	
 	
 #setup serial connection to the Arduino
@@ -196,13 +196,13 @@ def bAllGatesPassed():	#Returns True if there aren't any untriggered stones
 
 def openGlove():
    print('open Glove')
-   for DC in range(gloveMin, gloveMax, gloveStep):
+   for DC in range(gloveClosePos, gloveOpenPos, -gloveStep):
       wiringpi.pwmWrite(gGlove,DC)
       sleep(gloveSleep)
          
 def closeGlove():
    print('close Glove')
-   for DC in range(gloveMax, gloveMin, -gloveStep):
+   for DC in range(gloveOpenPos, gloveClosePos, gloveStep):
       wiringpi.pwmWrite(gGlove,DC)
       sleep(gloveSleep)
 
