@@ -49,6 +49,7 @@ flashPower = 72
 flashMind= 73
 flashTime = 74
 flashSoul = 75
+rainbowEffect = 90
 clearPixels = 99
 
 bitSpace = 1
@@ -272,6 +273,7 @@ while 1:
       quit()
       
    if bAllGatesPassed():
+      sendArdCommand(rainbowEffect)
       openGlove()
       GPIO.wait_for_edge(gEnd, GPIO.FALLING, timeout = gloveTimeout)
       finalGatePassed()
