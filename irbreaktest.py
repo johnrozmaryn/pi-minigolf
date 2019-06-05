@@ -1,38 +1,28 @@
+from pygame import mixer #for sound
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(21,GPIO.OUT)
 GPIO.setup(2,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+mixer.init(channels = 1)
+sndReady = mixer.Sound('./snd/time.wav')
+
+
 
 import time
 
-#pwm = GPIO.PWM(21,50)
-
-#pwm.start(5)
-
-DCLow = 4.5
-DCHigh = 12
-DC = 5
-sNum = 0.05
-DCdelta = .1
-
-#pwm.ChangeDutyCycle(DCLow)
-
-#while DC < DCHigh:
-#   pwm.ChangeDutyCycle(DC)
-#   time.sleep(sNum)
-#   DC += DCdelta
+def print_msg(channel):  #channel passed, but not used
+   print("gate tripped")
+   sndReady.play()
 
 
+
+GPIO.add_event_detect(2, GPIO.FALLING, callback=print_msg, bouncetime = 200)  
 while 1:
-   if GPIO.input(2):
-      print('High')
-   else:
-      print('Low')         
+#   GPIO.add_event_detect(2, GPIO.FALLING, callback=print_msg, bouncetime = 200, timeout = 2000)    
+   time.sleep(1)
+#   print("timeout")
 
-   time.sleep(.1)
-    
-       
 
    
 GPIO.cleanup()
