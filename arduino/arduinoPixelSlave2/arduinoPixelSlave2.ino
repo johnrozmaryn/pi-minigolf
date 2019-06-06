@@ -11,21 +11,21 @@
 #define pSpace 0
 #define rSpace 0    
 #define gSpace 0
-#define bSpace 180 
+#define bSpace 255 
 
 #define pReality 1
-#define rReality 180    
+#define rReality 255    
 #define gReality 0     
 #define bReality 0    
 
 #define pPower 2
-#define rPower 180
+#define rPower 100
 #define gPower 0
-#define bPower 180
+#define bPower 100
 
 #define pMind 3
 #define rMind 255  
-#define gMind 255   
+#define gMind 200   
 #define bMind 0    
 
 #define pTime 4
@@ -35,7 +35,7 @@
 
 #define pSoul 5
 #define rSoul 255
-#define gSoul 80
+#define gSoul 150
 #define bSoul 0
 
 char buf[80];  //serial buffer?
@@ -103,37 +103,37 @@ void doLights(int fromPi)
     break;
   default:
     if (fromPi % 2)  //start with the 1 bit, Space
-      pixels.setPixelColor(pSpace, rSpace, gSpace, bSpace);
+      pixels.setPixelColor(pSpace,pixels.gamma32(pixels.Color(rSpace, gSpace, bSpace)));
     else
       pixels.setPixelColor(pSpace, 0, 0, 0);
 
     fromPi = fromPi / 2 ; //shift to the 2 bit, Reality
     if (fromPi % 2)
-      pixels.setPixelColor(pReality, rReality, gReality, bReality);
+      pixels.setPixelColor(pReality,pixels.gamma32(pixels.Color(rReality, gReality, bReality)));
     else
       pixels.setPixelColor(pReality, 0, 0, 0);
 
     fromPi = fromPi / 2 ; //shift to the 4 bit, Power
     if (fromPi % 2)
-      pixels.setPixelColor(pPower, rPower, gPower, bPower);
+      pixels.setPixelColor(pPower,pixels.gamma32(pixels.Color(rPower, gPower, bPower)));
     else
       pixels.setPixelColor(pPower, 0, 0, 0);
 
     fromPi = fromPi / 2 ; //shift to the 8 bit, Mind
     if (fromPi % 2)
-      pixels.setPixelColor(pMind, rMind, gMind, bMind);
+      pixels.setPixelColor(pMind,pixels.gamma32(pixels.Color(rMind, gMind, bMind)));
     else
       pixels.setPixelColor(pMind, 0, 0, 0);
 
     fromPi = fromPi / 2 ; //shift to the 16 bit, Time
     if (fromPi % 2)
-      pixels.setPixelColor(pTime, rTime, gTime, bTime);
+      pixels.setPixelColor(pTime,pixels.gamma32(pixels.Color(rTime, gTime, bTime)));
     else
       pixels.setPixelColor(pTime, 0, 0, 0);
 
     fromPi = fromPi / 2 ; //shift to the last bit (32), Soul
     if (fromPi % 2)
-      pixels.setPixelColor(pSoul, rSoul, gSoul, bSoul);
+      pixels.setPixelColor(pSoul,pixels.gamma32(pixels.Color(rSoul, gSoul, bSoul)));
     else
       pixels.setPixelColor(pSoul, 0, 0, 0);
 
