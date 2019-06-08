@@ -2,7 +2,7 @@ from pygame import mixer #for sound
 import RPi.GPIO as GPIO
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
-GPIO.setup(2,GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(14,GPIO.IN, pull_up_down=GPIO.PUD_UP)
 
 mixer.init(channels = 1)
 sndReady = mixer.Sound('./snd/time.wav')
@@ -17,7 +17,7 @@ def print_msg(channel):  #channel passed, but not used
 
 
 
-GPIO.add_event_detect(2, GPIO.FALLING, callback=print_msg, bouncetime = 200)  
+GPIO.add_event_detect(14, GPIO.FALLING, callback=print_msg, bouncetime = 1000)  
 while 1:
 #   GPIO.add_event_detect(2, GPIO.FALLING, callback=print_msg, bouncetime = 200, timeout = 2000)    
    time.sleep(1)

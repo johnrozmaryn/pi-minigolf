@@ -17,29 +17,30 @@ import wiringpi
 
 #Sound Files
 #background music
-fMusic = './snd/av_theme.wav'
+#I'm now using absolute paths because of how I call execution in /etc/rc.local
+fMusic = '/home/pi/pi-minigolf/snd/av_theme.wav'
 #sounds for each gate
-fSpace = './snd/space.wav'
-fReality = './snd/reality.wav'
-fPower = './snd/power.wav'
-fMind = './snd/mind.wav'
-fTime = './snd/time.wav'
-fSoul = './snd/soul.wav'
+fSpace = '/home/pi/pi-minigolf/snd/space.wav'
+fReality = '/home/pi/pi-minigolf/snd/reality.wav'
+fPower = '/home/pi/pi-minigolf/snd/power.wav'
+fMind = '/home/pi/pi-minigolf/snd/mind.wav'
+fTime = '/home/pi/pi-minigolf/snd/time.wav'
+fSoul = '/home/pi/pi-minigolf/snd/soul.wav'
 #end game sounds
-fSnap = './snd/snap.wav'
-fMsg = './snd/i-dont-feel-so-good-2.wav'
+fSnap = '/home/pi/pi-minigolf/snd/snap.wav'
+fMsg = '/home/pi/pi-minigolf/snd/i-dont-feel-so-good-2.wav'
 #boot sound
-fReadySound = './snd/blaster-firing.wav'
+fReadySound = '/home/pi/pi-minigolf/snd/blaster-firing.wav'
 
 #GPIO Pins for the gates and glove
 #fake for now
-gSpace = 9
-gReality = 3
-gPower = 4
-gMind = 5
-gTime = 6
-gSoul = 7
-gEnd = 8 #final gate, not a Stone)
+gSpace = 14
+gReality = 15
+gPower = 23
+gMind = 24
+gTime = 25
+gSoul = 8
+gEnd = 7 #final gate, not a Stone)
 gGlove = 18
 
 #Constants to use in the serial commands to the Arduino for pixel stuff
@@ -256,7 +257,8 @@ sndReady.play()
 
 #testloop
 while 1:
-   testInput = input()
+#   testInput = input()
+   testInput = '0'
    if testInput == '1':
       gate_passed(gSpace)
    elif testInput == '2':
