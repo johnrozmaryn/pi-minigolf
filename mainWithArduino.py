@@ -34,13 +34,13 @@ fReadySound = '/home/pi/pi-minigolf/snd/blaster-firing.wav'
 
 #GPIO Pins for the gates and glove
 #fake for now
-gSpace = 14
-gReality = 15
-gPower = 23
-gMind = 24
-gTime = 25
-gSoul = 8
-gEnd = 7 #final gate, not a Stone)
+gSpace = 13
+gReality = 27
+gPower = 22
+gMind = 5
+gTime = 17
+gSoul = 6
+gEnd = 19 #final gate, not a Stone)
 gGlove = 18
 
 #Constants to use in the serial commands to the Arduino for pixel stuff
