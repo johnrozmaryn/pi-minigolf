@@ -25,7 +25,7 @@
 
 #define pMind 3
 #define rMind 255  
-#define gMind 200   
+#define gMind 255   
 #define bMind 0    
 
 #define pTime 4
@@ -35,7 +35,7 @@
 
 #define pSoul 5
 #define rSoul 255
-#define gSoul 150
+#define gSoul 100
 #define bSoul 0
 
 char buf[80];  //serial buffer?

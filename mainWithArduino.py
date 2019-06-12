@@ -177,7 +177,7 @@ def findStoneByChannel(channel):
 def gate_passed(channel):
    gatePassed = findStoneByChannel(channel)
    if not mixer.music.get_busy():
-      mixer.music.play()
+      mixer.music.play(loops = -1)
    if not gatePassed.tripped: #this is the first time the gate has been passed
       gatePassed.tripped = True
       gatePassed.sndObj.play()	#play a sound effect
