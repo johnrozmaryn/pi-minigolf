@@ -8,34 +8,34 @@
 #define LED_PIN 6
 #define LED_COUNT 6
 
-#define pSpace 0
+#define pSpace 2
 #define rSpace 0    
 #define gSpace 0
 #define bSpace 255 
 
-#define pReality 1
+#define pReality 4
 #define rReality 255    
 #define gReality 0     
 #define bReality 0    
 
-#define pPower 2
-#define rPower 100
+#define pPower 5
+#define rPower 125
 #define gPower 0
-#define bPower 100
+#define bPower 200
 
 #define pMind 3
 #define rMind 255  
 #define gMind 255   
 #define bMind 0    
 
-#define pTime 4
+#define pTime 0
 #define rTime 0    
 #define gTime 255  
 #define bTime 0    
 
-#define pSoul 5
+#define pSoul 1
 #define rSoul 255
-#define gSoul 100
+#define gSoul 150
 #define bSoul 0
 
 char buf[80];  //serial buffer?

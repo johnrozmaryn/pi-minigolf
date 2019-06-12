@@ -63,7 +63,7 @@ bitSoul = 32
 	
 #Glove Movement
 gloveOpenPos = 100
-gloveClosePos = 200
+gloveClosePos = 195
 gloveStep = 1
 gloveSleep = 0.03     #This was 0.01 in the video
 gloveTimeout = 5000	
