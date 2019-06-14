@@ -66,7 +66,7 @@ gloveOpenPos = 100
 gloveClosePos = 195
 gloveStep = 1
 gloveSleep = 0.03     #This was 0.01 in the video
-gloveTimeout = 20000	
+gloveTimeout = 5000	
 	
 #setup serial connection to the Arduino
 #ard = serial.Serial('/dev/ttyACM0', 115200)
@@ -176,113 +176,26 @@ def findStoneByChannel(channel):
 
 def gate_passed(channel):
    gatePassed = findStoneByChannel(channel)
-   if not mixer.music.get_busy():
-      mixer.music.play(loops = -1)
-   if not gatePassed.tripped: #this is the first time the gate has been passed
-      gatePassed.tripped = True
-      gatePassed.sndObj.play()	#play a sound effect
-      sendArdCommand(gatePassed.flashCmd) #flash all of the stones the color just passed   
-      sleep(2.1)   
-   bitCmd = 0   #finish with only collected stones turned on
-   for s in Stones:		 
-      if s.tripped:
-         bitCmd += s.bit
-   sendArdCommand(bitCmd)			   
+   gatePassed.sndObj.play()	#play a sound effect  
 
-def bAllGatesPassed():	#Returns True if there aren't any untriggered stones
-	val = True 
-	for s in Stones:
-		if not s.tripped:
-			val = False
-	return val
-
-def openGlove():
-   print('open Glove')
-   for DC in range(gloveClosePos, gloveOpenPos, -gloveStep):
-      wiringpi.pwmWrite(gGlove,DC)
-      sleep(gloveSleep)
-         
-def closeGlove():
-   print('close Glove')
-   for DC in range(gloveOpenPos, gloveClosePos, gloveStep):
-      wiringpi.pwmWrite(gGlove,DC)
-      sleep(gloveSleep)
-
-def finalGatePassed(): #channel is passed from GPIO, but not used
-	mixer.music.stop()
-	sndSnap.play()
-	sendArdCommand(clearPixels)
-	sleep(tParkerDelay)
-	sndMsg.play()
-	for s in Stones:
-	   s.tripped = False
-	closeGlove()
-	
-def sendArdCommand(cmdNumber):
-   ard.write(str.encode(str(cmdNumber) + '\r\n'))
-	
-#Setup music and some sound effects, don't start yet
- # mono instead of stereo
-mixer.music.load(fMusic)
-sndSnap = mixer.Sound(fSnap)
-sndMsg = mixer.Sound(fMsg)
-sndReady = mixer.Sound(fReadySound)
 
 #GPIO Config 
 GPIO.setmode(GPIO.BCM)
 GPIO.setwarnings(False)
 
-#Setup GPIO for glove
-wiringpi.wiringPiSetupGpio()
-wiringpi.pinMode(gGlove, wiringpi.GPIO.PWM_OUTPUT)
-wiringpi.pwmSetMode(wiringpi.GPIO.PWM_MODE_MS)
-wiringpi.pwmSetClock(192)
-wiringpi.pwmSetRange(2000)
-#glovePWM.start(gloveMin)
-#sleep(3)
-#glovePWM.stop()
-
-
 #Setup GPIO for the stones, includting callback events for everything	
 for s in Stones:
 	GPIO.setup(s.pin, GPIO.IN, pull_up_down = GPIO.PUD_UP) #change PUD_UP to PUD_DOWN if no response?
-	GPIO.add_event_detect(s.pin, GPIO.FALLING, callback=gate_passed, bouncetime = 200)
-
-	
-#Setup GPIO for exit chute
-GPIO.setup(gEnd, GPIO.IN, pull_up_down = GPIO.PUD_UP) #needs same pullup/pulldown value as the stone gates
+	GPIO.add_event_detect(s.pin, GPIO.FALLING, callback=gate_passed, bouncetime = 1000)
 
 #Play bootup sound
 sndReady.play()
 
 #testloop
 while 1:
-#   testInput = input()
-   testInput = '0'
-   if testInput == '1':
-      gate_passed(gSpace)
-   elif testInput == '2':
-      gate_passed(gReality)
-   elif testInput == '3':
-      gate_passed(gPower)
-   elif testInput == '4':
-      gate_passed(gMind)
-   elif testInput == '5':
-      gate_passed(gTime)
-   elif testInput == '6':
-      gate_passed(gSoul)
-   elif testInput == 'q':
-      quit()
-      
-   if bAllGatesPassed():
-      sendArdCommand(rainbowEffect)
-      openGlove()
-      GPIO.wait_for_edge(gEnd, GPIO.FALLING, timeout = gloveTimeout)
-      finalGatePassed()
       
    sleep(1)							
-							
-							
+														
 							
 							
 							
