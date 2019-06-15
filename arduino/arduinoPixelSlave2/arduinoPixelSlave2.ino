@@ -64,7 +64,7 @@ void flashPixels(int rColor, int gColor, int bColor)
 
 
   for (int i = 1; i <= 3; i++)  {
-    pixels.fill(pixels.Color(rColor, gColor, bColor));
+    pixels.fill(pixels.gamma32(pixels.Color(rColor, gColor, bColor)));
     pixels.show();
     delay(500);
     pixels.fill(pixels.Color(0, 0, 0));
