@@ -25,7 +25,7 @@
 
 #define pMind 3
 #define rMind 255  
-#define gMind 255   
+#define gMind 200   
 #define bMind 0    
 
 #define pTime 0
